@@ -1,52 +1,92 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.5...4.0)
 
-option(GENERATE_HEADER "Generate single include header" ON)
+project(argless VERSION 2.0.0 LANGUAGES CXX)
 
-project(Argless)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-if (GENERATE_HEADER)
-	file(GLOB_RECURSE SOURCES "src/Argless/*.hpp")
-
-	set(MAIN_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/Argless.hpp")
-
-	set(OUT_DIR "${CMAKE_SOURCE_DIR}/include")
-	set(HEADER "${OUT_DIR}/Argless.hpp")
-
-	set(HEADER_TEMP "${CMAKE_BINARY_DIR}/Argless.hpp.temp")
-
-	set(LICENSE "${CMAKE_SOURCE_DIR}/LICENSE.md")
-
-	set(HELLO "/* Argless - https://github.com/Maslowian/Argless */")
-
-	find_program(QUOM "quom")
-	if (NOT QUOM)
-		message(FATAL_ERROR "quom not found")
-	endif()
-
-	# {HELLO} \n {LICENSE} \n {HEADER_TEMP} 
-	add_custom_command(
-		OUTPUT ${HEADER}
-		COMMAND ${QUOM} ${MAIN_HEADER} ${HEADER_TEMP}
-		COMMAND ${CMAKE_COMMAND} -E echo "${HELLO}" > ${HEADER}
-		COMMAND ${CMAKE_COMMAND} -E echo "" >> ${HEADER}
-		COMMAND ${CMAKE_COMMAND} -E echo "/*" >> ${HEADER}
-		COMMAND ${CMAKE_COMMAND} -E cat ${LICENSE} >> ${HEADER}
-		COMMAND ${CMAKE_COMMAND} -E echo "*/" >> ${HEADER}
-		COMMAND ${CMAKE_COMMAND} -E echo "" >> ${HEADER}
-		COMMAND ${CMAKE_COMMAND} -E cat ${HEADER_TEMP} >> ${HEADER}
-		DEPENDS ${SOURCES}
-	)
-
-	add_custom_target(generate_header ALL DEPENDS ${HEADER})
+set(MAIN_PROJECT OFF)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(MAIN_PROJECT ON)
 endif()
 
-include_directories("src/Argless")
+option(ARGLESS_SINGLE_HEADER "Use single header." ON)
+option(ARGLESS_INSTALL "Install CMake targets during install step." ${MAIN_PROJECT})
+
+if (NOT ARGLESS_SINGLE_HEADER)
+    include(FetchContent)
+    find_package(tetter QUIET)
+    if (tetter_FOUND)
+        message(STATUS "Found: tetter")
+        set(TETTER_FETCHED OFF)
+    else()
+        message(STATUS "Not Found: tetter (will be downloaded)")
+        set(TETTER_INSTALL ${ARGLESS_INSTALL})
+        FetchContent_Declare(
+            tetter
+            GIT_REPOSITORY https://github.com/Maslowian/tetter.git
+            GIT_TAG        master
+        )
+        FetchContent_MakeAvailable(tetter)
+        set(TETTER_FETCHED ON)
+    endif()
+endif()
 
 add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-target_include_directories(${PROJECT_NAME} INTERFACE "src/")
+include(GNUInstallDirs)
 
+set(ARGLESS_CONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}" CACHE INTERNAL "")
+set(ARGLESS_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}")
+set(ARGLESS_TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+set(ARGLESS_CMAKE_VERSION_CONFIG_FILE "${PROJECT_NAME}ConfigVersion.cmake")
+set(ARGLESS_CMAKE_PROJECT_CONFIG_FILE "${PROJECT_NAME}Config.cmake")
 
-add_subdirectory("Sandbox")
+if (ARGLESS_SINGLE_HEADER)
+    set(ARGLESS_INCLUDE_BUILD_DIR "${PROJECT_SOURCE_DIR}/single_include/")
+else()
+    set(ARGLESS_INCLUDE_BUILD_DIR "${PROJECT_SOURCE_DIR}/include/")
+    target_link_libraries(${PROJECT_NAME} INTERFACE tetter)
+endif()
+
+target_include_directories(${PROJECT_NAME} INTERFACE
+    $<BUILD_INTERFACE:${ARGLESS_INCLUDE_BUILD_DIR}>
+    $<INSTALL_INTERFACE:${ARGLESS_INCLUDE_INSTALL_DIR}>
+)
+
+if (ARGLESS_INSTALL)
+    install(
+        DIRECTORY ${ARGLESS_INCLUDE_BUILD_DIR}
+        DESTINATION ${ARGLESS_INCLUDE_INSTALL_DIR}
+    )
+
+    install(
+        TARGETS ${PROJECT_NAME}
+        EXPORT ${ARGLESS_TARGETS_EXPORT_NAME}
+        INCLUDES DESTINATION ${ARGLESS_INCLUDE_INSTALL_DIR}
+    )
+
+    if (TETTER_FETCHED)
+        install(
+            TARGETS tetter
+            EXPORT ${ARGLESS_TARGETS_EXPORT_NAME}
+            INCLUDES DESTINATION ${ARGLESS_INCLUDE_INSTALL_DIR}
+        )
+    endif()
+
+    install(
+        EXPORT ${ARGLESS_TARGETS_EXPORT_NAME}
+        FILE ${ARGLESS_CMAKE_PROJECT_CONFIG_FILE}
+        NAMESPACE ${PROJECT_NAME}::
+        DESTINATION ${ARGLESS_CONFIG_INSTALL_DIR}
+    )
+
+    include(CMakePackageConfigHelpers)
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/${ARGLESS_CMAKE_VERSION_CONFIG_FILE}"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
+    install(
+        FILES "${CMAKE_CURRENT_BINARY_DIR}/${ARGLESS_CMAKE_VERSION_CONFIG_FILE}"
+        DESTINATION ${ARGLESS_CONFIG_INSTALL_DIR}
+    )
+endif()

@@ -1,0 +1,29 @@
+name: Generate single include header
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  generate-header:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: true
+
+      - name: Setup
+        run: mkdir build
+      - name: CMake
+        run: cd build; cmake .. -DARGLESS_SINGLE_HEADER=OFF -DARGLESS_INSTALL=OFF
+      - name: Generate header
+        run: python ./tools/generate_header.py ./include/argless.hpp -o=./single_include/argless.hpp -I=./include "-I=./build/$(dirname $(cd build && find -type f -name tetter.hpp | head -n 1))"
+
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: Generated single include header 

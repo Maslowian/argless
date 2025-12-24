@@ -1,0 +1,22 @@
+name: Build Example
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup
+        run: mkdir build
+      - name: CMake
+        run: cd build; cmake ../Example -DARGLESS_SINGLE_HEADER=OFF
+      - name: Build
+        run: cd build; make -j$(nproc)
+      - name: Test Run
+        run: cd build; ./Example --help
