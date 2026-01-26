@@ -53,7 +53,7 @@ struct str
 
 
 template <typename to_char_t, typename from_char_t>
-inline static constexpr std::size_t char_ratio = (sizeof(from_char_t) / sizeof(to_char_t) > 1 ? sizeof(from_char_t) / sizeof(to_char_t) : 1);
+constexpr inline std::size_t char_ratio = (sizeof(from_char_t) / sizeof(to_char_t) > 1 ? sizeof(from_char_t) / sizeof(to_char_t) : 1);
 
 template <typename to_char_t, typename from_char_t>
 inline constexpr str<to_char_t, char_ratio<to_char_t, from_char_t> + 1> get_charu(const from_char_t*& it)
@@ -223,7 +223,7 @@ struct _static_str_impl
 };
 
 template <str str_>
-inline static constexpr auto static_str = _static_str_impl<str_>::value;
+constexpr inline auto static_str = _static_str_impl<str_>::value;
 
 _ARGLESS_CORE_END
 
@@ -320,7 +320,7 @@ SOFTWARE.
 #endif
 #endif
 
-namespace _tetter { namespace {
+namespace _tetter {
 
 template <bool v, typename tt, typename ft>
 struct _conditional;
@@ -1540,7 +1540,7 @@ struct _lambda_t_wrapper
 	template <typename t, _size_t i, typename ats>
 	struct type_impl
 	{
-		using type = _lambda_invoke<const decltype(lambda)&, t, i, ats, _enable_t<>>::result_type;
+		using type = typename _lambda_invoke<const decltype(lambda)&, t, i, ats, _enable_t<>>::result_type;
 	};
 
 	template <typename t, _size_t i, typename ats>
@@ -1681,8 +1681,6 @@ struct _tetter_sequence_impl<0, t, _tetter<ts...>>
 {
 	using type = _tetter<ts...>; 
 };
-
-}
 
 template <typename... ts>
 struct _tetter_impl
@@ -1952,6 +1950,12 @@ struct tetter : public _tetter::_tetter_impl<ts...>
 	{
 		return call_max<_tetter::_lambda_impl>(static_cast<lambda&&>(_lambda), static_cast<args&&>(_args)...);
 	}
+
+	template <typename lambda, typename... args>
+	inline static constexpr auto cast_invoke(lambda&& _lambda, args&&... _args)
+	{
+		return static_cast<lambda&&>(_lambda).template operator()<ts...>(static_cast<args&&>(_args)...);
+	}
 #endif
 };
 
@@ -2025,7 +2029,7 @@ template <typename t>
 struct _expected_t;
 
 template <typename t>
-static constexpr inline _expected_t<t> make_expected;
+constexpr inline _expected_t<t> make_expected;
 
 template <typename t, typename char_t>
 struct parse_result
@@ -2684,7 +2688,7 @@ _ARGLESS_CORE_END
 
 _ARGLESS_BEGIN
 
-static constexpr inline auto nodesc = _ARGLESS_CORE str("");
+constexpr inline auto nodesc = _ARGLESS_CORE str("");
 
 template <_ARGLESS_CORE parsable type_, _ARGLESS_CORE str name_, _ARGLESS_CORE str desc_ = nodesc, _ARGLESS_CORE str... aliases_>
 struct arg
@@ -3664,7 +3668,7 @@ struct parser<enum_t, std::enable_if_t<std::is_enum_v<enum_t>>>
 
 _ARGLESS_CORE_END
 
-#if defined(ARGLESS_HEADER_STRING) || defined(_GLIBCXX_STRING) || defined(_LIBCPP_STRING) || defined(_STRING_)
+#if defined(ARGLESS_STDH_STRING) || defined(_GLIBCXX_STRING) || defined(_LIBCPP_STRING) || defined(_STRING_)
 
 #include <string>
 
@@ -3707,7 +3711,7 @@ _ARGLESS_CORE_END
 
 #endif
 
-#if defined(ARGLESS_HEADER_STRING_VIEW) || defined(_GLIBCXX_STRING_VIEW) || defined(_LIBCPP_STRING_VIEW) || defined(_STRING_VIEW_)
+#if defined(ARGLESS_STDH_STRING_VIEW) || defined(_GLIBCXX_STRING_VIEW) || defined(_LIBCPP_STRING_VIEW) || defined(_STRING_VIEW_)
 
 #include <string_view>
 
