@@ -41,7 +41,7 @@ template <typename t>
 struct _expected_t;
 
 template <typename t>
-static constexpr inline _expected_t<t> make_expected;
+constexpr inline _expected_t<t> make_expected;
 
 template <typename t, typename char_t>
 struct parse_result

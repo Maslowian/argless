@@ -1,7 +1,7 @@
 #pragma once
 #include "../parser.hpp"
 
-#if defined(ARGLESS_HEADER_STRING) || defined(_GLIBCXX_STRING) || defined(_LIBCPP_STRING) || defined(_STRING_)
+#if defined(ARGLESS_STDH_STRING) || defined(_GLIBCXX_STRING) || defined(_LIBCPP_STRING) || defined(_STRING_)
 
 #include <string>
 
@@ -44,7 +44,7 @@ _ARGLESS_CORE_END
 
 #endif
 
-#if defined(ARGLESS_HEADER_STRING_VIEW) || defined(_GLIBCXX_STRING_VIEW) || defined(_LIBCPP_STRING_VIEW) || defined(_STRING_VIEW_)
+#if defined(ARGLESS_STDH_STRING_VIEW) || defined(_GLIBCXX_STRING_VIEW) || defined(_LIBCPP_STRING_VIEW) || defined(_STRING_VIEW_)
 
 #include <string_view>
 

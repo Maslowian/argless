@@ -36,7 +36,7 @@ struct str
 
 
 template <typename to_char_t, typename from_char_t>
-inline static constexpr std::size_t char_ratio = (sizeof(from_char_t) / sizeof(to_char_t) > 1 ? sizeof(from_char_t) / sizeof(to_char_t) : 1);
+constexpr inline std::size_t char_ratio = (sizeof(from_char_t) / sizeof(to_char_t) > 1 ? sizeof(from_char_t) / sizeof(to_char_t) : 1);
 
 template <typename to_char_t, typename from_char_t>
 inline constexpr str<to_char_t, char_ratio<to_char_t, from_char_t> + 1> get_charu(const from_char_t*& it)
@@ -206,6 +206,6 @@ struct _static_str_impl
 };
 
 template <str str_>
-inline static constexpr auto static_str = _static_str_impl<str_>::value;
+constexpr inline auto static_str = _static_str_impl<str_>::value;
 
 _ARGLESS_CORE_END
