@@ -59,7 +59,6 @@ if (ARGLESS_ENABLE_MODULE)
     )
     target_compile_features(${PROJECT_NAME}-module PUBLIC cxx_std_20 cxx_std_23)
     target_link_libraries(${PROJECT_NAME}-module PRIVATE ${PROJECT_NAME})
-    target_compile_definitions(${PROJECT_NAME}-module PRIVATE ARGLESS_STDH_ALL)
 endif()
 
 if (ARGLESS_INSTALL)

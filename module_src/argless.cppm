@@ -1,4 +1,5 @@
 module;
+#define ARGLESS_STDH_ALL
 #include <argless.hpp>
 export module argless;
 
