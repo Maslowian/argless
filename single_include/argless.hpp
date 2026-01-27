@@ -1,3 +1,29 @@
+/* argless - https://github.com/Maslowian/argless */
+
+/*
+MIT License
+
+Copyright (c) 2024-2026 Piotr Ginalski
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #pragma once
 
 #define ARGLESS_VERSION_MAJOR 2
@@ -2122,7 +2148,7 @@ public:
 	bool m_force = false;
 };
 
-template <typename t, typename enable = void>
+template <typename t>
 struct parser
 {
 	static_assert(false, "type t is not supported (u can template specialize argless::core::parser to support type t)");
@@ -3244,7 +3270,8 @@ struct parser<bool>
 };
 
 template <typename t>
-struct parser<t, std::enable_if_t<tetter<int, unsigned int, short, unsigned short, signed char, unsigned char, long, unsigned long, long long, unsigned long long>::template find_t<t>::value>>
+	requires tetter<int, unsigned int, short, unsigned short, signed char, unsigned char, long, unsigned long, long long, unsigned long long>::template find_t<t>::value
+struct parser<t>
 {
 	using type = t; 
 
@@ -3274,7 +3301,8 @@ struct parser<t, std::enable_if_t<tetter<int, unsigned int, short, unsigned shor
 };
 
 template <typename t>
-struct parser<t, std::enable_if_t<tetter<float, double, long double>::template find_t<t>::value>>
+	requires tetter<float, double, long double>::template find_t<t>::value
+struct parser<t>
 {
 	using type = t; 
 
@@ -3299,7 +3327,8 @@ struct parser<t, std::enable_if_t<tetter<float, double, long double>::template f
 };
 
 template <typename t>
-struct parser<t, std::enable_if_t<tetter<char, wchar_t, char8_t, char16_t, char32_t>::template find_t<t>::value>>
+	requires tetter<char, wchar_t, char8_t, char16_t, char32_t>::template find_t<t>::value
+struct parser<t>
 {
 	using type = t; 
 
@@ -3344,7 +3373,8 @@ struct parser<t, std::enable_if_t<tetter<char, wchar_t, char8_t, char16_t, char3
 };
 
 template <typename t>
-struct parser<t, std::enable_if_t<tetter<char[4], wchar_t[4 / sizeof(wchar_t)], char8_t[4], char16_t[2], char32_t[1]>::template find_t<t>::value>>
+	requires tetter<char[4], wchar_t[4 / sizeof(wchar_t)], char8_t[4], char16_t[2], char32_t[1]>::template find_t<t>::value
+struct parser<t>
 {
 	using type = t; 
 
@@ -3461,7 +3491,7 @@ _ARGLESS_CORE_END
 _ARGLESS_CORE_BEGIN
 
 template <template <typename, typename> typename t, typename t_t, typename t_st>
-struct parser<t<t_t, t_st>, std::enable_if_t<tetter<
+	requires tetter<
 #if defined(ARGLESS_STDH_VECTOR) || defined(_GLIBCXX_VECTOR) || defined(_LIBCPP_VECTOR) || defined(_VECTOR_)
 		std::vector<t_t, t_st>,
 #endif
@@ -3477,7 +3507,8 @@ struct parser<t<t_t, t_st>, std::enable_if_t<tetter<
 #if defined(ARGLESS_STDH_QUEUE) || defined(_GLIBCXX_QUEUE) || defined(_LIBCPP_QUEUE) || defined(_QUEUE_)
 		std::queue<t_t, t_st>,
 #endif
-	void>::pop_back::template find_t<t<t_t, t_st>>::value>>
+	void>::pop_back::template find_t<t<t_t, t_st>>::value
+struct parser<t<t_t, t_st>>
 {
 	using type = t<t_t, t_st>; 
 
@@ -3585,11 +3616,8 @@ _ARGLESS_END
 
 _ARGLESS_CORE_BEGIN
 
-template <typename t, typename enable = void>
-struct is_scoped_enum : std::false_type {};
-
 template <typename t>
-struct is_scoped_enum<t, std::enable_if_t<std::is_enum_v<t>>> : std::integral_constant<bool, !std::is_convertible_v<t, std::underlying_type_t<t>>> {};
+struct is_scoped_enum : std::integral_constant<bool, std::is_enum_v<t> && !std::is_convertible_v<t, std::underlying_type_t<t>>> {};
 
 template <typename t>
 struct is_enum_values : public std::false_type {};
@@ -3598,7 +3626,8 @@ template <typename... ts>
 struct is_enum_values<enum_values<ts...>> : public std::true_type {};
 
 template <typename enum_t>
-struct parser<enum_t, std::enable_if_t<std::is_enum_v<enum_t>>>
+	requires std::is_enum_v<enum_t>
+struct parser<enum_t>
 {
 	static_assert(requires { typename enum_refl<enum_t>::values; } &&
 			is_enum_values<typename enum_refl<enum_t>::values>::value &&
@@ -4014,3 +4043,4 @@ struct parser<std::tuple<>>
 _ARGLESS_CORE_END
 
 #endif
+
