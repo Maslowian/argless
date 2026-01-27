@@ -30,7 +30,7 @@
 _ARGLESS_CORE_BEGIN
 
 template <template <typename, typename> typename t, typename t_t, typename t_st>
-struct parser<t<t_t, t_st>, std::enable_if_t<tetter<
+	requires tetter<
 #if defined(ARGLESS_STDH_VECTOR) || defined(_GLIBCXX_VECTOR) || defined(_LIBCPP_VECTOR) || defined(_VECTOR_)
 		std::vector<t_t, t_st>,
 #endif
@@ -46,7 +46,8 @@ struct parser<t<t_t, t_st>, std::enable_if_t<tetter<
 #if defined(ARGLESS_STDH_QUEUE) || defined(_GLIBCXX_QUEUE) || defined(_LIBCPP_QUEUE) || defined(_QUEUE_)
 		std::queue<t_t, t_st>,
 #endif
-	void>::pop_back::template find_t<t<t_t, t_st>>::value>>
+	void>::pop_back::template find_t<t<t_t, t_st>>::value
+struct parser<t<t_t, t_st>>
 {
 	using type = t<t_t, t_st>; 
 

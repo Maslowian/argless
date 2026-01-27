@@ -72,11 +72,8 @@ _ARGLESS_END
 
 _ARGLESS_CORE_BEGIN
 
-template <typename t, typename enable = void>
-struct is_scoped_enum : std::false_type {};
-
 template <typename t>
-struct is_scoped_enum<t, std::enable_if_t<std::is_enum_v<t>>> : std::integral_constant<bool, !std::is_convertible_v<t, std::underlying_type_t<t>>> {};
+struct is_scoped_enum : std::integral_constant<bool, std::is_enum_v<t> && !std::is_convertible_v<t, std::underlying_type_t<t>>> {};
 
 template <typename t>
 struct is_enum_values : public std::false_type {};
@@ -85,7 +82,8 @@ template <typename... ts>
 struct is_enum_values<enum_values<ts...>> : public std::true_type {};
 
 template <typename enum_t>
-struct parser<enum_t, std::enable_if_t<std::is_enum_v<enum_t>>>
+	requires std::is_enum_v<enum_t>
+struct parser<enum_t>
 {
 	static_assert(requires { typename enum_refl<enum_t>::values; } &&
 			is_enum_values<typename enum_refl<enum_t>::values>::value &&

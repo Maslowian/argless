@@ -29,7 +29,8 @@ struct parser<bool>
 };
 
 template <typename t>
-struct parser<t, std::enable_if_t<tetter<int, unsigned int, short, unsigned short, signed char, unsigned char, long, unsigned long, long long, unsigned long long>::template find_t<t>::value>>
+	requires tetter<int, unsigned int, short, unsigned short, signed char, unsigned char, long, unsigned long, long long, unsigned long long>::template find_t<t>::value
+struct parser<t>
 {
 	using type = t; 
 
@@ -59,7 +60,8 @@ struct parser<t, std::enable_if_t<tetter<int, unsigned int, short, unsigned shor
 };
 
 template <typename t>
-struct parser<t, std::enable_if_t<tetter<float, double, long double>::template find_t<t>::value>>
+	requires tetter<float, double, long double>::template find_t<t>::value
+struct parser<t>
 {
 	using type = t; 
 
@@ -84,7 +86,8 @@ struct parser<t, std::enable_if_t<tetter<float, double, long double>::template f
 };
 
 template <typename t>
-struct parser<t, std::enable_if_t<tetter<char, wchar_t, char8_t, char16_t, char32_t>::template find_t<t>::value>>
+	requires tetter<char, wchar_t, char8_t, char16_t, char32_t>::template find_t<t>::value
+struct parser<t>
 {
 	using type = t; 
 
@@ -129,7 +132,8 @@ struct parser<t, std::enable_if_t<tetter<char, wchar_t, char8_t, char16_t, char3
 };
 
 template <typename t>
-struct parser<t, std::enable_if_t<tetter<char[4], wchar_t[4 / sizeof(wchar_t)], char8_t[4], char16_t[2], char32_t[1]>::template find_t<t>::value>>
+	requires tetter<char[4], wchar_t[4 / sizeof(wchar_t)], char8_t[4], char16_t[2], char32_t[1]>::template find_t<t>::value
+struct parser<t>
 {
 	using type = t; 
 

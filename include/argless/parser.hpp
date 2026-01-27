@@ -134,7 +134,7 @@ public:
 	bool m_force = false;
 };
 
-template <typename t, typename enable = void>
+template <typename t>
 struct parser
 {
 	static_assert(false, "type t is not supported (u can template specialize argless::core::parser to support type t)");
