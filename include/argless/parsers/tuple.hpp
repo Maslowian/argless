@@ -31,7 +31,7 @@ struct parser<std::tuple<tup_t, tup_st, tup_ts...>>
 			args.m_limit = to;
 			auto rest_result = parser<std::tuple<tup_st, tup_ts...>>::parse(args);
 
-			if (!result.is_valid())
+			if (!rest_result.is_valid())
 				continue;
 
 			if (result.is_default() && rest_result.is_default())
