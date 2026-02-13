@@ -145,7 +145,7 @@ struct parser<enum_t>
 		auto str = vs::pop_front::invoke_pipe([]<typename t>(auto str){ return [](){ return or_name<decltype(str){}(), (str_from<char_t, "'">() + str_cast<char_t, t::name>() + str_from<char_t, "'">())>(); }; },
 				[](){ return str_from<char_t, "'">() + str_cast<char_t, vs::front::name>() + str_from<char_t, "'">(); });
 		if constexpr (!is_scoped_enum<enum_t>::value)
-			return or_name<decltype(str){}(), str_name<std::underlying_type_t<enum_t>, char_t>()>(); 
+			return or_name<decltype(str){}(), type_name<std::underlying_type_t<enum_t>, char_t>()>(); 
 		else
 			return str();
 	}();

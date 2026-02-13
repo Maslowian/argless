@@ -69,9 +69,9 @@ struct parser<std::variant<var_ts...>>
 	template <typename char_t>
 	static constexpr inline auto name = []() {
 		auto str = ts::pop_front::invoke_pipe([]<typename t>(auto str){ return [](){
-				return or_name<std::remove_cvref_t<decltype(str)>{}(), str_name<t, char_t>()>(); 
+				return or_name<std::remove_cvref_t<decltype(str)>{}(), type_name<t, char_t>()>(); 
 			}; }, [](){
-				return str_name<typename ts::front, char_t>();
+				return type_name<typename ts::front, char_t>();
 			});
 		if constexpr (tetter<var_ts...>::template find_t<std::monostate>::value) return optional_name<char_t, decltype(str){}()>();
 		else return str();

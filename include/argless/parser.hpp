@@ -179,7 +179,7 @@ struct _expected_t
 };
 
 template <typename t, typename char_t>
-inline consteval auto str_name()
+inline consteval auto type_name()
 {
 	return _ARGLESS_CORE parser<t>::template name<char_t>;
 }
@@ -275,7 +275,7 @@ inline consteval auto and_name()
 }
 
 template <typename char_t, std::size_t n>
-inline consteval auto str_number() 
+inline consteval auto number_name() 
 {
 	str<char_t, []() { 
 		std::size_t v = n, c = 1;

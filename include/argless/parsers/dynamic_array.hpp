@@ -77,7 +77,7 @@ struct parser<t<t_t, t_st>>
 	}
 
 	template <typename char_t>
-	static constexpr inline auto name = array_wrap_name<str_name<t_t, char_t>()>() + str_from<char_t, "[]">();
+	static constexpr inline auto name = array_wrap_name<type_name<t_t, char_t>()>() + str_from<char_t, "[]">();
 };
 
 _ARGLESS_CORE_END

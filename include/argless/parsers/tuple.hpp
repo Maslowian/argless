@@ -46,7 +46,7 @@ struct parser<std::tuple<tup_t, tup_st, tup_ts...>>
 	}
 
 	template <typename char_t>
-	static constexpr inline auto name = and_name<str_name<tup_t, char_t>(), str_name<std::tuple<tup_st, tup_ts...>, char_t>()>();
+	static constexpr inline auto name = and_name<type_name<tup_t, char_t>(), type_name<std::tuple<tup_st, tup_ts...>, char_t>()>();
 };
 
 template <typename tup_t>
@@ -69,7 +69,7 @@ struct parser<std::tuple<tup_t>>
 	}
 
 	template <typename char_t>
-	static constexpr inline auto name = str_name<tup_t, char_t>();
+	static constexpr inline auto name = type_name<tup_t, char_t>();
 };
 
 template <>

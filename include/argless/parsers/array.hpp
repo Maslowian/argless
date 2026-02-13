@@ -52,7 +52,7 @@ struct parser<std::array<arr_t, arr_n>>
 	}
 
 	template <typename char_t>
-	static constexpr inline auto name = array_wrap_name<str_name<arr_t, char_t>()>() + str_from<char_t, "[">() + str_number<char_t, arr_n>() + str_from<char_t, "]">();
+	static constexpr inline auto name = array_wrap_name<type_name<arr_t, char_t>()>() + str_from<char_t, "[">() + number_name<char_t, arr_n>() + str_from<char_t, "]">();
 };
 
 _ARGLESS_CORE_END

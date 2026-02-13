@@ -24,7 +24,7 @@ struct parser<std::optional<opt_t>>
 	}
 
 	template <typename char_t>
-	static constexpr inline auto name = optional_name<str_name<opt_t, char_t>()>();
+	static constexpr inline auto name = optional_name<type_name<opt_t, char_t>()>();
 };
 
 _ARGLESS_CORE_END

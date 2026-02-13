@@ -10,13 +10,13 @@ using _ARGLES_CORE args;
 using _ARGLES_CORE make_default;
 using _ARGLES_CORE make_expected;
 
-using _ARGLESS_CORE str_name;
+using _ARGLESS_CORE type_name;
 using _ARGLESS_CORE wrapped_name;
 using _ARGLESS_CORE optional_name;
 using _ARGLESS_CORE array_wrap_name;
 using _ARGLESS_CORE or_name;
 using _ARGLESS_CORE and_name;
-using _ARGLESS_CORE str_number 
+using _ARGLESS_CORE number_name; 
 
 using _ARGLESS_CORE str;
 using _ARGLESS_CORE str_cast;
