@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <array>
+#include <list>
 #include <filesystem>
 #include <argless.hpp>
 
@@ -45,7 +46,22 @@ using app = argless::app<"ExampleArglessApp", argless::nodesc, argless::accumula
 
 		argless::arg<argless::accumulate<void>, "--accumulate">,
 		argless::arg<argless::required<bool>, "--required">,
-		argless::arg<argless::default_value<int, 2137>, "--default-value">
+		argless::arg<argless::default_value<int, 2137>, "--default-value">,
+
+		argless::arg<
+			std::tuple<
+				std::tuple<
+					float,
+					std::variant<
+						std::list<std::array<int, 2>>,
+						std::list<int>
+					>,
+					int
+				>,
+				int
+			>,
+			"--complex"
+		>
 	>;
 
 int main(int argc, const char** argv)
@@ -115,7 +131,12 @@ int main(int argc, const char** argv)
 	}
 
 	if (auto& e = result.get<"--enum">())
-		std::cout << "--enum: " << static_cast<int>(*e) << std::endl;
+	{
+		if (*e == ExampleEnum::Active)
+			std::cout << "--enum: Active" << static_cast<int>(*e) << std::endl;
+		else if (*e == ExampleEnum::Inactive)
+			std::cout << "--enum: Inactive" << static_cast<int>(*e) << std::endl;
+	}
 
 	if (auto& o = result.get<"--option">())
 	{
@@ -141,6 +162,39 @@ int main(int argc, const char** argv)
 	std::cout << "--required: " << result.get<"--required">() << std::endl;
 
 	std::cout << "--default-value: " << result.get<"--default-value">() << std::endl;
+
+	if (auto& c = result.get<"--complex">())
+	{
+		auto& tuple = std::get<0>(*c);
+		std::cout << "std::tuple: { std::tuple: { float: " << std::get<0>(tuple) << ", std::variant: "; 
+		if (auto list = std::get_if<std::list<int>>(&std::get<1>(tuple)))
+		{
+			std::cout << "std::list<int>: ( ";
+			bool first = true;
+			for (auto& _int : *list)
+			{
+				if (!first)
+					std::cout << ", ";
+				std::cout << "int: " << _int;
+				first = false;
+			}
+			std::cout << " )";
+		}
+		else if (auto list = std::get_if<std::list<std::array<int, 2>>>(&std::get<1>(tuple)))
+		{
+			std::cout << "std::list<std::array<int, 2>>: ( ";
+			bool first = true;
+			for (auto& array : *list)
+			{
+				if (!first)
+					std::cout << ", ";
+				std::cout << "{ " << array[0] << ", " << array[1] << " }";
+				first = false;
+			}
+			std::cout << " )";
+		}
+		std::cout << ", int: " << std::get<2>(tuple) << " }, int: " << std::get<1>(*c) << " }" << std::endl;
+	}
 
 	if (result.get<>())
 		std::cout << "no-arg paths:" << std::endl;
