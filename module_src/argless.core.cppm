@@ -5,10 +5,10 @@ export module argless.core;
 
 export _ARGLESS_CORE_BEGIN
 
-using _ARGLES_CORE parser;
-using _ARGLES_CORE args;
-using _ARGLES_CORE make_default;
-using _ARGLES_CORE make_expected;
+using _ARGLESS_CORE parser;
+using _ARGLESS_CORE args;
+using _ARGLESS_CORE make_default;
+using _ARGLESS_CORE make_expected;
 
 using _ARGLESS_CORE type_name;
 using _ARGLESS_CORE wrapped_name;
