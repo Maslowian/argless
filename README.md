@@ -36,3 +36,4 @@ TODO:
 - [ ] pages
 - [ ] groups
 - [ ] argless.core module
+- [ ] remove make_default, use arg consumed counter
